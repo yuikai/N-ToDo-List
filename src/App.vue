@@ -38,10 +38,7 @@ export default {
     changeStatus({ status, id }) {
       this.status = status;
       if ( !(id === null) )
-      this.temp = {
-        id: id,
-        data: this.todos[id],
-      }
+      this.temp = this.todos[this.todos.map(function(e){return e.id}).indexOf(id)];
     },
     resetStatus() {
       this.status = 0;
@@ -50,7 +47,11 @@ export default {
 
     addTask({ title, userId }) {
       this.todos.push({
-        id: this.todos.length + 1,
+        id: (
+          ( this.todos.length > 0 )
+          ? this.todos[this.todos.length - 1].id + 1
+          : 1
+        ),
         userId: userId,
         title: title,
         completed: false,
@@ -58,13 +59,17 @@ export default {
       this.resetStatus();
     },
     updateTask({ title, userId }) {
-      this.todos[this.temp.id].userId = userId;
-      this.todos[this.temp.id].title = title;
+      this.todos.indexOf(this.temp).userId = userId;
+      this.todos.indexOf(this.temp).title = title;
 
       this.resetStatus();
     },
     deleteTask() {
-      this.todos.splice( this.temp.id, 1 );
+      this.todos.splice(
+        this.todos.map(
+          function(e) { return e.id }
+        ).indexOf(this.temp.id) , 1
+      );
       this.resetStatus();
     },
   },

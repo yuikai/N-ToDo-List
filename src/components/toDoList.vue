@@ -10,14 +10,19 @@
     </b-button>
     <b-collapse class="collapse" id="collapse-pending" v-model="collapsePending">
       <div class="pending item" v-for="task in pendingTask"
-        :key="task.id - 1">
-        <h2 @click="openForm(2, task.id - 1)">{{ task.title }}</h2>
+        :key="task.id">
+        <h2 @click="openForm(2, task.id)">{{ task.title }}</h2>
         <p>User: {{ task.userId }}</p>
         <b-form-checkbox
           size="lg"
           v-model="task.completed">
         </b-form-checkbox>
       </div>
+
+      <div class="empty-indicator" v-if="pendingCount === 0">
+        No Pending Task :)
+      </div>
+
     </b-collapse>
     <!-- End of Pending Section -->
 
@@ -30,14 +35,19 @@
     </b-button>
     <b-collapse class="collapse" id="collapse-completed" v-model="collapseCompleted">
       <div class="completed item" v-for="task in completedTask"
-        :key="task.id - 1">
+        :key="task.id">
         <b-form-checkbox
           size="lg"
           v-model="task.completed">
         </b-form-checkbox>
-        <h2 @click="openForm(2, task.id - 1)">{{ task.title }}</h2>
+        <h2 @click="openForm(2, task.id)">{{ task.title }}</h2>
         <p>User: {{ task.userId }}</p>
       </div>
+
+      <div class="empty-indicator" v-if="completedCount === 0">
+        Completed Task Will be Listed Here.
+      </div>
+      
     </b-collapse>
     <!-- End of Completed Section -->
 
@@ -256,6 +266,14 @@ export default {
 
   font-style: italic;
   font-size: .9rem;
+}
+
+.empty-indicator {
+  padding: 10px;
+  border-radius: 10px;
+
+  background-color: #070F2B;
+  color: white;
 }
 
 #add-btn {

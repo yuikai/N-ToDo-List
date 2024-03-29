@@ -6,13 +6,17 @@
       <h6>Title</h6>
       <p>{{ titleError }}</p>
     </span>
-    <input v-model.trim="title"/>
+    <input v-model.trim="title"
+      required
+      placeholder="Enter title of the new task"/>
 
     <span>
       <h6>User ID</h6>
       <p>{{ idError }}</p>
     </span>
-    <input v-model.trim="userId"/>
+    <input v-model.trim="userId"
+      required
+      placeholder="Enter user ID"/>
 
     <div id="close-btn" @click="discard">╳</div>
     <img v-if="status === 2"
@@ -42,8 +46,8 @@ export default {
     validTitle: true,
     validId: true,
 
-    title: null,
-    userId: null,
+    title: (this.status === 2 ? this.temp.title : null),
+    userId: (this.status === 2 ? this.temp.userId : null),
   }},
   computed: {
     titleError() {
