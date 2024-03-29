@@ -196,6 +196,7 @@ export default {
 
   &:hover {
     background-color: #1B1A55;
+    z-index: 1000;
   }
 }
 .header p {

@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import toDoForm from './components/toDoForm.vue'
+import toDoForm from './components/toDoForm.vue';
 import toDoList from './components/toDoList.vue';
 
 export default {
@@ -81,7 +81,7 @@ export default {
       .then( response => response.json() )
       .then( json => {
         this.original = json;
-        this.todos = this.original // .slice(0, 10); // slicing for easier presentation
+        this.todos = this.original.slice(0, 10); // slicing for easier presentation
       })
       .catch( error => {
         console.error('Error while fetching JSON:', error);
