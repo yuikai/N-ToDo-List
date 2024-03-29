@@ -46,7 +46,7 @@ export default {
     },
 
     addTask({ title, userId }) {
-      this.todos.push({
+      var task = {
         id: (
           ( this.todos.length > 0 )
           ? this.todos[this.todos.length - 1].id + 1
@@ -55,7 +55,9 @@ export default {
         userId: userId,
         title: title,
         completed: false,
-      })
+      };
+
+      this.todos.push( task );
       this.resetStatus();
     },
     updateTask({ title, userId }) {
@@ -79,7 +81,7 @@ export default {
       .then( response => response.json() )
       .then( json => {
         this.original = json;
-        this.todos = this.original.slice(0, 10);
+        this.todos = this.original // .slice(0, 10); // slicing for easier presentation
       })
       .catch( error => {
         console.error('Error while fetching JSON:', error);

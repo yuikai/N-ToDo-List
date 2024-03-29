@@ -208,17 +208,28 @@ export default {
   font-weight: 800;
   color: #070F2B;
 }
-#pending p {
-  background-color: #ffaa00;
-}
-#completed p {
-  background-color: #00ff03;
-}
 .header h6 {
   margin: 0px 0px 0px 10px;
 
   font-size: 1rem;
   font-weight: 500;
+}
+.btn:focus {
+  box-shadow: none;
+}
+
+.not-collapsed {
+  border-radius: 10px 10px 0px 0px;
+}
+.collapsed {
+  border-radius: 10px;
+}
+
+#pending p {
+  background-color: #ffaa00;
+}
+#completed p {
+  background-color: #00ff03;
 }
 
 .collapse {
