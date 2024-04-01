@@ -13,14 +13,16 @@
         {{ route }}
 
         <div v-if="index > 0"
-          class="count">
-          {{ counts[index-1] }}
+          :class="['count', index < 2 ? 'pending' : 'completed']">
+          {{ index === 1 ? pendingTaskCount : completedTaskCount }}
         </div>
       </b-button>
     </div>
 
     <div id="component-content">
-      <router-view></router-view>
+      <router-view
+        @add-form="changeStatus( 1, null )">
+      </router-view>
     </div>
   </div>
 </template>
@@ -43,14 +45,23 @@ export default {
     ],
 
     todos: [],
-    counts: [0, 0],
+    status: 0,
   }},
   computed: {
+    // list filtering
     pendingTask() {
       return this.todos.filter( task => task.completed === false );
     },
     completedTask() {
       return this.todos.filter( task => task.completed === true );
+    },
+
+    // filtered list count
+    pendingTaskCount() {
+      return this.pendingTask.length;
+    },
+    completedTaskCount() {
+      return this.completedTask.length;
     },
   },
 
@@ -66,6 +77,14 @@ export default {
         } else {
           Vue.set( this.selected, i, false);
         }
+      }
+    },
+
+    // form handling
+    changeStatus( st, id ) {
+      this.status = st;
+      if ( !(id === null) ) {
+        this.status = 2; // dummy
       }
     },
 
@@ -139,7 +158,7 @@ export default {
 /* base styling */
 #app {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
 
   display: grid;
   grid-template-rows: max-content 1fr;
@@ -199,7 +218,7 @@ export default {
   margin: 0px 0px 0px 15px;
   padding: 0px 8px;
   border-radius: 5px;
-  background-color: #070F2B;
+  color: white;
 }
 #sidebar .tab {
   border: 2px solid transparent;
@@ -213,5 +232,11 @@ export default {
   &:hover {
     color: white;
   }
+}
+.pending {
+  background-color: #ff9800;
+}
+.completed {
+  background-color: #8bc34a;
 }
 </style>

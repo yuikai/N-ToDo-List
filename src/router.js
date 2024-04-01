@@ -31,4 +31,12 @@ const router = new VueRouter({
   routes
 });
 
+router.beforeEach((to, from, next) => {
+  if (to.path === '/') { // Redirect to /dashboard if navigating to root
+    next('/dashboard');
+  } else {
+    next();
+  }
+});
+
 export default router;
