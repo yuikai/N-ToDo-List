@@ -73,7 +73,11 @@ export default {
           Vue.set( this.selected, i, true);
         } else if ( i === id ) {
           Vue.set( this.selected, i, true);
-          this.$router.push(this.routes[i].toLowerCase());
+
+          this.$router.push({
+            path: this.routes[i].toLowerCase(),
+            meta: { tasks: (i === 1) ? this.pendingTask : this.completedTask },
+          });
         } else {
           Vue.set( this.selected, i, false);
         }
@@ -186,8 +190,16 @@ export default {
 #header img {
   width: auto;
   height: 60%;
+  border-radius: 100%;
   object-fit: contain;
   cursor: pointer;
+  background-color: #1B1A55;
+
+  &:hover {
+    background-color: #2D4086;
+  }
+
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
 #sidebar {
