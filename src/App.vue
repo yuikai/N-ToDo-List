@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+  <!-- v3
+
     <toDoForm v-if="status > 0"
       :status="status"
       :temp="temp"
@@ -13,28 +15,36 @@
       :todos="todos"
       @open-form="changeStatus">
     </toDoList>
+
+  -->
+
+    <div id="header">
+      <h1>ToDo List</h1>
+    </div>
+    <div id="sidebar">
+      sidebar
+    </div>
+    <div id="container">
+      content
+    </div>
+
   </div>
 </template>
 
 <script>
-import toDoForm from './components/toDoForm.vue';
-import toDoList from './components/toDoList.vue';
+import axios from 'axios';
 
 export default {
   name: 'App',
   components: {
-    toDoForm,
-    toDoList,
   },
 
   data() { return {
-    original: [],
     todos: [],
-    status: 0,
-    temp: null,
   }},
 
   methods: {
+    /* v3
     changeStatus({ status, id }) {
       this.status = status;
       if ( !(id === null) )
@@ -74,25 +84,94 @@ export default {
       );
       this.resetStatus();
     },
+    */
+
+    
+
+    // Axios HTTP Requests
+    GETTask() {
+      axios.get('https://jsonplaceholder.typicode.com/todos')
+        .then( response => {
+          this.todos = response.data;
+          console.log(response.data);
+        })
+        .catch( error => {
+          console.log(error);
+        });
+    },
+    POSTTask( task ) {
+      axios.post('https://jsonplaceholder.typicode.com/todos', task)
+        .then( response => {
+          console.log(response.data);
+        })
+        .catch( error => {
+          console.log(error);
+        });
+    },
+    PUTTask( id, task ) {
+      var path = 'https://jsonplaceholder.typicode.com/todos/' + id;
+      axios.put(path, task)
+        .then( response => {
+          console.log(response.data);
+        })
+        .catch( error => {
+          console.log(error);
+        });
+    },
+    DELETETask( id ) {
+      var path = 'https://jsonplaceholder.typicode.com/todos/' + id;
+      axios.delete(path)
+        .then( response => {
+          console.log(response.data);
+        })
+        .catch( error => {
+          console.log(error);
+        });
+    },
   },
 
   created() {
-    fetch( 'https://jsonplaceholder.typicode.com/todos/' )
-      .then( response => response.json() )
-      .then( json => {
-        this.original = json;
-        this.todos = this.original.slice(0, 10); // slicing for easier presentation
-      })
-      .catch( error => {
-        console.error('Error while fetching JSON:', error);
-      });
+    // request data when created the vue application
+    this.GETTask();
   },
 }
 </script>
 
 <style>
+/* body theme */
 .primary {
   background-color: #070F2B;
   color: #B9B4C7;
+}
+
+#header {
+  background-color: red;
+}
+
+#sidebar {
+  background-color: green;
+}
+
+#container {
+  background-color: blue;
+}
+
+/* Positioning */
+#app {
+  display: grid;
+  grid-template-rows: max-content 1fr;
+  grid-template-columns: max-content 1fr;
+}
+#header {
+  grid-row: 1;
+  grid-column: 1/span 2;
+}
+#sidebar {
+  grid-row: 2;
+  grid-column: 1;
+}
+#container {
+  grid-row: 2;
+  grid-column: 2;
 }
 </style>
