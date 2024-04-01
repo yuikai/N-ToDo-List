@@ -1,6 +1,5 @@
 <template>
   <div class="toDoList-container">
-
     <!-- Pending Section -->
     <b-button class="header" id="pending"
       v-b-toggle.collapse-pending>

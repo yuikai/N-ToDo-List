@@ -1,7 +1,9 @@
 <template>
 <div>
   <div class="background"></div>
+
   <div class="toDoForm-container">
+    <!-- Input Section -->
     <span>
       <h6>Title</h6>
       <p>{{ titleError }}</p>
@@ -17,7 +19,9 @@
     <input v-model.trim="userId"
       required
       placeholder="Enter user ID"/>
+    <!-- End of Input Section -->
 
+    <!-- Buttons Section -->
     <div id="close-btn" @click="discard">╳</div>
     <img v-if="status === 2"
       @click="deleteTask"
@@ -27,6 +31,7 @@
       @click="validate"
       alt="Save Button"
       src="../assets/images/save-icon.svg"/>
+    <!-- End of Buttons Section -->
   </div>
 </div>
 </template>
