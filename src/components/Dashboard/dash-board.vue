@@ -15,7 +15,10 @@ export default {
 
   methods: {
     addForm() {
-      this.$emit( 'add-form' );
+      this.$emit( 'add-form', {
+        st: 1,
+        id: null,
+      });
     },
   },
 };
@@ -38,20 +41,20 @@ export default {
   margin: 10px 0px 100px 0px;
   padding: 5px 20px;
 
-  border: 2px solid transparent;
+  border: 2px solid #B9B4C7;
   background-color: #1B1A55;
 
   font-size: 2em;
   color: #B9B4C7;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
   &:hover {
     background-color: #2D4086;
     color: white;
     font-weight: 500;
+  }
+
+  &:active {
+    border-color: #2D4086;
   }
 }
 </style>

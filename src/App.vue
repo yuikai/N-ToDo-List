@@ -21,19 +21,26 @@
 
     <div id="component-content">
       <router-view
-        @add-form="changeStatus( 1, null )">
+        @add-form="changeStatus($event)"
+        @update-form="changeStatus($event)">
       </router-view>
     </div>
+
+    <task-form v-if="status > 0"
+      >
+    </task-form>
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
 import axios from 'axios';
+import taskForm from './components/TaskForm/task-form.vue';
 
 export default {
   name: 'App',
   components: {
+    taskForm,
   },
 
   data() { return {
@@ -68,31 +75,48 @@ export default {
   methods: {
     // switching tabs
     selectTab( id ) {
-      for ( var i=0; i < this.routes.length; i++ ) {
-        if ( i === id && this.selected[i] === true ) {
-          Vue.set( this.selected, i, true);
-        } else if ( i === id ) {
-          Vue.set( this.selected, i, true);
+      var pushFlag = true;
 
-          this.$router.push( this.routes[i].toLowerCase() );
-          this.$router.params = (i === 1) ? this.pendingTask : this.completedTask;
+      for ( var i=0; i < this.selected.length; i++ ) {
+        if ( this.selected[i] === true && i === id ) {
+          pushFlag = false;
         } else {
-          Vue.set( this.selected, i, false);
+          Vue.set( this.selected, i, false );
         }
       }
+      Vue.set( this.selected, id, true );
+
+      switch( id ) {
+        case 0: 
+          this.$router.params = null;
+          break;
+        case 1:
+          this.$router.params = this.pendingTask;
+          break;
+        case 2:
+          this.$router.params = this.completedTask;
+          break;
+      }
+
+      if ( pushFlag ) { this.$router.push( this.routes[id].toLowerCase() ) }
     },
 
     // form handling
-    changeStatus( st, id ) {
+    changeStatus({ st, id }) {
       this.status = st;
       if ( !(id === null) ) {
         this.status = 2; // dummy
       }
     },
+    resetStatus() {
+      this.status = 0;
+    },
 
     // Axios HTTP Requests
-    GETTask() {
-      axios.get('https://jsonplaceholder.typicode.com/todos')
+    GETTask( id = null ) {
+      var path = 'https://jsonplaceholder.typicode.com/todos' + ( id === null ? '' : id );
+
+      axios.get(path)
         .then( response => {
           this.todos = response.data;
           console.log("GET Tasks from JSONPlaceholder");
@@ -159,12 +183,12 @@ export default {
 
 /* base styling */
 #app {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
 
   display: grid;
   grid-template-rows: max-content 1fr;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: 12.5em 1fr;
 }
 
 #header {
@@ -245,8 +269,10 @@ export default {
 }
 .pending {
   background-color: #ff9800;
+  color: white;
 }
 .completed {
   background-color: #8bc34a;
+  color: white;
 }
 </style>
