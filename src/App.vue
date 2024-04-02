@@ -74,10 +74,8 @@ export default {
         } else if ( i === id ) {
           Vue.set( this.selected, i, true);
 
-          this.$router.push({
-            path: this.routes[i].toLowerCase(),
-            meta: { tasks: (i === 1) ? this.pendingTask : this.completedTask },
-          });
+          this.$router.push( this.routes[i].toLowerCase() );
+          this.$router.params = (i === 1) ? this.pendingTask : this.completedTask;
         } else {
           Vue.set( this.selected, i, false);
         }

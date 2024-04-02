@@ -16,10 +16,12 @@ const routes = [
   {
     path: '/completed',
     component: completedTask,
+    props: true,
   },
   {
     path: '/pending',
     component: pendingTask,
+    props: true,
   },
   {
     path: '/form',

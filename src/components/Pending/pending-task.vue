@@ -1,7 +1,5 @@
 <template>
   <div class="pending-container">
-    lololol
-
     {{ tasks }}
   </div>
 </template>
@@ -14,12 +12,9 @@ export default {
     };
   },
 
-  beforeRouteEnter(to, from, next) {
-    console.log("Meta Data:", to.meta);
-    next(vm => {
-      vm.tasks = to.meta.tasks;
-    });
-  },
+  created() {
+    this.tasks = this.$router.params;
+  }
 }
 </script>
 
