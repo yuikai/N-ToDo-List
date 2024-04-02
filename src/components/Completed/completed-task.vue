@@ -3,7 +3,7 @@
     <table class="completed table" v-if="taskCount > 0">
       <thead>
         <th scope="col" class="col-auto">#</th>
-        <th scope="col" class="col-auto">User Id</th>
+        <th scope="col" class="col-1">User Id</th>
         <th scope="col" class="col">Task</th>
         <th scope="col" class="col-auto">Schedule</th>
         <th scope="col" class="col-auto">Status</th>
