@@ -27,7 +27,12 @@
     </div>
 
     <task-form v-if="status > 0"
-      >
+      :status="status"
+      :temp="temp"
+      @close-form="resetStatus"
+      @delete-task="deleteTask($event)"
+      @update-task="updateTask($event)"
+      @add-task="addTask($event)">
     </task-form>
   </div>
 </template>
@@ -53,6 +58,7 @@ export default {
 
     todos: [],
     status: 0,
+    temp: {},
   }},
   computed: {
     // list filtering
@@ -86,30 +92,80 @@ export default {
       }
       Vue.set( this.selected, id, true );
 
-      switch( id ) {
-        case 0: 
-          this.$router.params = null;
-          break;
-        case 1:
-          this.$router.params = this.pendingTask;
-          break;
-        case 2:
-          this.$router.params = this.completedTask;
-          break;
-      }
+      this.setParams();
 
       if ( pushFlag ) { this.$router.push( this.routes[id].toLowerCase() ) }
+    },
+    setParams() {
+      if ( this.selected[1] ) {
+        this.$router.params = this.pendingTask;
+      } else if ( this.selected[2] ) {
+        this.$router.params = this.completedTask;
+      }
     },
 
     // form handling
     changeStatus({ st, id }) {
       this.status = st;
       if ( !(id === null) ) {
-        this.status = 2; // dummy
+        var task = this.todos.find( task => task.id === id);
+
+        this.temp = {
+          id: id,
+          userId: task.userId,
+          title: task.title,
+          schedule: task.shcedule,
+        }
       }
     },
     resetStatus() {
       this.status = 0;
+    },
+    deleteTask({ id }) {
+      var index = this.todos.findIndex(task => task.id === id);
+
+      this.todos.splice(index, 1);
+
+      this.DELETETask( id );
+
+      this.resetStatus();
+    },
+    updateTask({ id, userId, title, schedule }) {
+      var index = this.todos.findIndex(task => task.id === id);
+
+      Vue.set(this.todos, index, {
+        id: id,
+        userId: userId,
+        title: title,
+        schedule: schedule ? schedule : null,
+        completed: this.todos[index].completed,
+      });
+
+      this.PUTTask( id, {
+        id: id,
+        userId: userId,
+        title: title,
+        completed: this.todos[index].completed,
+      });
+
+      this.resetStatus();
+    },
+    addTask({ userId, title, schedule }) {
+      this.todos.push({
+        id: this.todos.length > 0 ? this.todos[this.todos.length - 1].id + 1 : 1,
+        userId: userId,
+        title: title,
+        completed: false,
+        schedule: schedule ? schedule : null,
+      });
+
+      this.POSTTask({
+        userId: userId,
+        title: title,
+        completed: false,
+      });
+
+      this.resetStatus();
     },
 
     // Axios HTTP Requests
@@ -128,7 +184,7 @@ export default {
     POSTTask( task ) {
       axios.post('https://jsonplaceholder.typicode.com/todos', task)
         .then( response => {
-          console.log(response.data);
+          console.log("POST Tasks to JSONPlaceholder" + response.data);
         })
         .catch( error => {
           console.log(error);
@@ -136,19 +192,21 @@ export default {
     },
     PUTTask( id, task ) {
       var path = 'https://jsonplaceholder.typicode.com/todos/' + id;
-      axios.put(path, task)
-        .then( response => {
-          console.log(response.data);
+      axios
+        .put(path, task)
+        .then((response) => {
+          console.log("PUT Tasks to JSONPlaceholder" + response.data);
         })
-        .catch( error => {
-          console.log(error);
+        .catch((error) => {
+          console.error('Error:', error.message);
+          console.error('Error details:', error.response.data);
         });
     },
     DELETETask( id ) {
       var path = 'https://jsonplaceholder.typicode.com/todos/' + id;
       axios.delete(path)
         .then( response => {
-          console.log(response.data);
+          console.log("DELETE Tasks from JSONPlaceholder" + response.data);
         })
         .catch( error => {
           console.log(error);
@@ -169,7 +227,7 @@ export default {
   src: url('./assets/fonts/RedHatDisplay-VariableFont_wght.ttf');
 }
 @font-face {
-  font-family: 'Red Hat Displat Italic';
+  font-family: 'Red Hat Display Italic';
   src: url('./assets/fonts/RedHatDisplay-Italic-VariableFont_wght.ttf');
 }
 
