@@ -26,6 +26,7 @@ const routes = [
   {
     path: '/form',
     component: TaskForm,
+    props:true,
   }
 ];
 

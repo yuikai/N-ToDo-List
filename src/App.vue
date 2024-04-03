@@ -6,24 +6,31 @@
     </div>
 
     <div id="sidebar">
-      <b-button v-for="( route, index ) in routes"
-        :key="index"
-        :class="selected[index] ? 'active-tab' : 'tab'"
-        @click="selectTab(index)">
-        {{ route }}
+      <router-link v-for="( route, index ) in routes" :key="index"
+        :to="'/' + route.toLowerCase()"
+        class="no-underline">
+        <b-button
+          :class="selected[index] ? 'active-tab' : 'tab'"
+          @click="selectTab(index)">
+            {{ route }}
 
-        <div v-if="index > 0"
-          :class="['count', index < 2 ? 'pending' : 'completed']">
-          {{ index === 1 ? pendingTaskCount : completedTaskCount }}
-        </div>
-      </b-button>
+            <div v-if="index > 0"
+              :class="['count', index < 2 ? 'pending' : 'completed']">
+              {{ index === 1 ? pendingTaskCount : completedTaskCount }}
+            </div>
+        </b-button>
+      </router-link>
     </div>
 
     <div id="component-content">
-      <router-view
+      <router-view v-if="RELOAD"
         @add-form="changeStatus($event)"
         @update-form="changeStatus($event)">
       </router-view>
+
+      <div id="spinner-frame" v-if="!RELOAD">
+        <b-spinner></b-spinner>
+      </div>
     </div>
 
     <task-form v-if="status > 0"
@@ -49,6 +56,7 @@ export default {
   },
 
   data() { return {
+    RELOAD: true,
     selected: [true, false, false],
     routes: [
       "Dashboard",
@@ -81,27 +89,28 @@ export default {
   methods: {
     // switching tabs
     selectTab( id ) {
-      var pushFlag = true;
-
       for ( var i=0; i < this.selected.length; i++ ) {
-        if ( this.selected[i] === true && i === id ) {
-          pushFlag = false;
-        } else {
+        if ( !(this.selected[i] === true && i === id) ) {
           Vue.set( this.selected, i, false );
         }
       }
       Vue.set( this.selected, id, true );
 
-      this.setParams();
-
-      if ( pushFlag ) { this.$router.push( this.routes[id].toLowerCase() ) }
-    },
-    setParams() {
       if ( this.selected[1] ) {
         this.$router.params = this.pendingTask;
       } else if ( this.selected[2] ) {
         this.$router.params = this.completedTask;
       }
+    },
+    forceReload() {
+      var tab = this.selected[1] ? 1 : 2;
+
+      this.RELOAD = false;
+      this.selectTab(0);
+      setTimeout( () => {
+        this.selectTab(tab);
+        this.RELOAD = true;
+      }, 1);
     },
 
     // form handling
@@ -129,6 +138,8 @@ export default {
       this.DELETETask( id );
 
       this.resetStatus();
+
+      this.forceReload();
     },
     updateTask({ id, userId, title, schedule }) {
       var index = this.todos.findIndex(task => task.id === id);
@@ -149,6 +160,8 @@ export default {
       });
 
       this.resetStatus();
+
+      this.forceReload();
     },
     addTask({ userId, title, schedule }) {
       this.todos.push({
@@ -166,6 +179,8 @@ export default {
       });
 
       this.resetStatus();
+
+      this.forceReload();
     },
 
     // Axios HTTP Requests
@@ -266,6 +281,7 @@ export default {
 
   font-size: 1.5em;
   font-weight: 600;
+  text-decoration: none;
 }
 #header img {
   width: auto;
@@ -289,10 +305,19 @@ export default {
   display: flex;
   flex-direction: column;
 }
+.no-underline {
+  width: 1fr;
+
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
 #sidebar .tab, #sidebar .active-tab {
+  width: 100%;
   margin: 5px 0px;
   padding: 5px 20px;
-
   
   color: #B9B4C7;
 
@@ -332,5 +357,17 @@ export default {
 .completed {
   background-color: #8bc34a;
   color: white;
+}
+
+#spinner-frame {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.spinner-border {
+  color: #B9B4C7;
 }
 </style>

@@ -4,7 +4,7 @@
       <thead>
         <th scope="col" class="col-auto">#</th>
         <th scope="col" class="col-1">User Id</th>
-        <th scope="col" class="col">Task</th>
+        <th id="task-title" scope="col" class="col">Task</th>
         <th scope="col" class="col-auto">Schedule</th>
         <th scope="col" class="col-auto">Status</th>
       </thead>
@@ -15,7 +15,7 @@
             @click="updateForm( task.id )">
             {{ index + 1 }}
           </th>
-          <td class="col-auto"
+          <td class="col-2"
             @click="updateForm( task.id )">
             {{ task.userId }}
           </td>
@@ -80,6 +80,11 @@ export default {
 
   created() {
     this.tasks = this.$router.params;
+  },
+  watch: {
+    '$route.params': function ( params ) {
+      this.tasks = params;
+    }
   }
 }
 </script>
@@ -98,9 +103,15 @@ export default {
 
   text-align: center;
   align-content: center;
+
+  cursor: pointer;
 }
 #task-title {
   text-align: left;
+}
+.pending th {
+  text-align: center;
+  align-content: center;
 }
 
 .pending-container .btn {
