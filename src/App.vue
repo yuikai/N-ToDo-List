@@ -5,6 +5,11 @@
       <img alt="Profile Image" src="./assets/images/profile-placeholder.svg"/>
     </div>
 
+    <div id="status-box" v-if="statusMsg != ''">
+      <p>{{ statusMsg }}</p>
+      <p id="close" @click="dismissStatus">✖</p>
+    </div>
+
     <div id="sidebar">
       <router-link v-for="( route, index ) in routes" :key="index"
         :to="'/' + route.toLowerCase()"
@@ -14,7 +19,7 @@
           @click="selectTab(index)">
             {{ route }}
 
-            <div v-if="index > 0"
+            <div v-show="index > 0"
               :class="['count', index < 2 ? 'pending' : 'completed']">
               {{ index === 1 ? pendingTaskCount : completedTaskCount }}
             </div>
@@ -67,6 +72,7 @@ export default {
     todos: [],
     status: 0,
     temp: {},
+    statusMsg: '',
   }},
   computed: {
     // list filtering
@@ -184,6 +190,13 @@ export default {
     },
 
     // Axios HTTP Requests
+    showStatus( msg ) {
+      this.statusMsg = msg;
+    },
+    dismissStatus() {
+      this.statusMsg = '';
+    },
+
     GETTask( id = null ) {
       var path = 'https://jsonplaceholder.typicode.com/todos' + ( id === null ? '' : id );
 
@@ -191,6 +204,7 @@ export default {
         .then( response => {
           this.todos = response.data;
           console.log("GET Tasks from JSONPlaceholder");
+          this.statusMsg = 'Status Code: ' + response.status + " / Method: GET";
         })
         .catch( error => {
           console.log(error);
@@ -199,7 +213,8 @@ export default {
     POSTTask( task ) {
       axios.post('https://jsonplaceholder.typicode.com/todos', task)
         .then( response => {
-          console.log("POST Tasks to JSONPlaceholder" + response.data);
+          console.log("POST Tasks to JSONPlaceholder");
+          this.statusMsg = 'Status Code: ' + response.status + " / Method: POST";
         })
         .catch( error => {
           console.log(error);
@@ -210,7 +225,8 @@ export default {
       axios
         .put(path, task)
         .then((response) => {
-          console.log("PUT Tasks to JSONPlaceholder" + response.data);
+          console.log("PUT Tasks to JSONPlaceholder");
+          this.statusMsg = 'Status Code: ' + response.status + " / Method: PUT";
         })
         .catch((error) => {
           console.error('Error:', error.message);
@@ -221,7 +237,8 @@ export default {
       var path = 'https://jsonplaceholder.typicode.com/todos/' + id;
       axios.delete(path)
         .then( response => {
-          console.log("DELETE Tasks from JSONPlaceholder" + response.data);
+          console.log("DELETE Tasks from JSONPlaceholder");
+          this.statusMsg = 'Status Code: ' + response.status + " / Method: DELETE";
         })
         .catch( error => {
           console.log(error);
@@ -260,7 +277,7 @@ export default {
   min-height: 100vh;
 
   display: grid;
-  grid-template-rows: max-content 1fr;
+  grid-template-rows: max-content max-content 1fr;
   grid-template-columns: 12.5em 1fr;
 }
 
@@ -299,6 +316,9 @@ export default {
 }
 
 #sidebar {
+  grid-row: 3;
+  grid-column: 1;
+
   padding: 5px 10px;
   border-right: 1px solid #B9B4C7;
 
@@ -359,6 +379,10 @@ export default {
   color: white;
 }
 
+#component-content {
+  grid-row: 3;
+  grid-column: 2;
+}
 #spinner-frame {
   width: 100%;
   height: 100%;
@@ -369,5 +393,32 @@ export default {
 }
 .spinner-border {
   color: #B9B4C7;
+}
+
+#status-box {
+  grid-row: 2;
+  grid-column: 1/span 2;
+
+  padding: 5px 20px;
+
+  border-bottom: 1px solid #B9B4C7;
+  background-color: #1B1A55;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#status-box p {
+  margin: 0px;
+}
+#status-box #close {
+  padding: 0px 6px;
+  border-radius: 100%;
+  cursor: pointer;
+
+  &:hover {
+    background-color: tomato;
+  }
 }
 </style>
